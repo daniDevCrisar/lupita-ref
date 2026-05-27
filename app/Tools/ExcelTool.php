@@ -30,10 +30,13 @@ class ExcelTool
         if ($valor === '') return '';
 
         // Reemplazo manual de tildes
-        $buscar = ['á','é','í','ó','ú','Á','É','Í','Ó','Ú','ü','Ü','Ñ','ñ'];
-        $reemplazar = ['a','e','i','o','u','A','E','I','O','U','u','U','N','n'];
+        $buscar = ['á','é','í','ó','ú','Á','É','Í','Ó','Ú','ü','Ü','Ñ','ñ','?','!','¡'];
+        $reemplazar = ['a','e','i','o','u','A','E','I','O','U','u','U','N','n','','',''];
 
         $valor = str_replace($buscar, $reemplazar, $valor);
+        //            $col_nom = str_replace(' ', '_', $item);
+//            $col_nom = str_replace('?', '', $col_nom);
+//            $col_nom = str_replace('!', '', $col_nom);
 
         // Mayúsculas UTF8
         $valor = mb_strtoupper($valor, 'UTF-8');
@@ -66,7 +69,7 @@ class ExcelTool
     //array de columnas , hoja de excel, id_lote
     public static function ordenarColumnasExcel(array $tabla_cols, array $registros, $lote_id  )
     {
-        $excel_cols = $registros[0] ?? false;
+        $excel_cols = $registros[2] ?? false;
         //----normalizar nombres de columnas del excel (reemplazar espacios por guiones bajos, eliminar caracteres especiales, etc)----------------
 //        $excel_cols = array_map(function($item) {
 //            $col_nom = str_replace(' ', '_', $item);
@@ -80,26 +83,29 @@ class ExcelTool
         //dd($excel_cols,$tabla_cols);
         //--------buscar columnas requeridas en el excel----------------
         foreach ($tabla_cols as $columna) {
-            $columna_n=ExcelTool::normalizarTexto($columna);
+            $columna_n=$columna;
             $buscar = array_search($columna_n, $excel_cols);
             if ($buscar !== false) {
                 $col_excel_ordenadas[$columna] = $buscar;
-                //echo "Columna encontrada: " . $columna . " en posición " . $buscar . "<br>";
+                echo "Columna encontrada: " . $columna . " en posición " . $buscar . "<br>";
             } else {
                 $col_excel_ordenadas[$columna] = '';
-                //echo "Columna NO encontrada: " . $columna . "<br>" . $buscar;
+                echo "Columna NO encontrada: " . $columna . "<br>" . $buscar;
             }
 
-            if ($lote_id and $columna == 'lote_id') {
+            if ($lote_id and $columna == 'LOTE_ID') {
                 //echo "Asignando lote_id: " . $lote_id . "<br>";
                 $col_excel_ordenadas[$columna] = strval($lote_id);
             }
+
         }
 
         //$col_excel_ordenadas['vapi_id']=0;
         //dd($col_excel_ordenadas);
 
         //------ generar el array ordenado de registros con las columnas requeridas----------------
+        array_shift($registros);//eliminar la fila de encabezados
+        array_shift($registros);//eliminar la fila de encabezados
         array_shift($registros);//eliminar la fila de encabezados
         $registros_ord=[];
         foreach ($registros as $fila) {

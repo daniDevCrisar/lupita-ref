@@ -50,45 +50,14 @@ class ImportController extends Controller
 
         $lote_id = ExcelTool::generarLoteId();
         //-------procesar referencias--------------
-        $llamadas = $data[$request->txt_llamadas] ?? []; //seleccionar la hoja
-        if ( $llamadas[0][0]=='ID') $llamadas[0][0]='VAPI_ID'; //reemplazar id por vapi_id en la primera columna
-        $columnas_tmpLotesDet = DBColumns::tmpLotesDet();
-        $llamadas_excel_ord=ExcelTool::ordenarColumnasExcel($columnas_tmpLotesDet, $llamadas,$lote_id);
+        $hoja_refs = $data['Seguimiento estado Vehículos'] ?? []; //seleccionar la hoja
 
-        $filas_procesadas=DBCore::insertBatch('tmp_lotes_det',$columnas_tmpLotesDet, $llamadas_excel_ord);
-        //procesar hoja trt
-        $referencias = $data[$request->txt_ref] ?? [];
-        if ( $referencias){
-            $cols_tpm_lotes_ref = DBColumns::tmp_lotes_ref();
-            $referencias_excel_ord = ExcelTool::ordenarColumnasExcel($cols_tpm_lotes_ref, $referencias,$lote_id);
-            DBCore::insertBatch('tmp_lotes_ref',$cols_tpm_lotes_ref, $referencias_excel_ord);
-        }
+        $hoja_columnas = DBColumns::$campos_referencias_excel;
+        $hoja_col_ordenadas=ExcelTool::ordenarColumnasExcel($hoja_columnas, $hoja_refs,$lote_id);
 
-        //-----------------------------------------------
-        //procesar hoja trt_COMPROMISO
-        $referencias_compromiso = $data[$request->txt_ref_1] ?? [];
-        if ( $referencias_compromiso){
-            $cols_tpm_lotes_ref_compromiso = DBColumns::tmp_lotes_ref_compromiso();
-            $referencias_c_excel_ord = ExcelTool::ordenarColumnasExcel($cols_tpm_lotes_ref_compromiso, $referencias_compromiso,$lote_id);
-            DBCore::insertBatch('tmp_lotes_ref_compromiso',$cols_tpm_lotes_ref_compromiso, $referencias_c_excel_ord);
-        }
+        $filas_procesadas=DBCore::insertBatch('tmp_refs',DBColumns::$table_referencias, $hoja_col_ordenadas);
 
-        //---------------------------------------------------
-
-        //dd($referencias_c_excel_ord,$referencias_excel_ord,$llamadas_excel_ord);
-        //dd($llamadas_excel_ord);
-        //cabezera del lote
-        $nombre_archivo = $file->getClientOriginalName();
-        DBTmpLotes::crear(
-            $lote_id,
-            $nombre_archivo . ' ('.$filas_procesadas.'/'. count($llamadas_excel_ord).")" ,''
-        );
-
-        return redirect()->route('importar.excel.lote', [
-            'lote_id' => $lote_id
-        ]);
-
-
+        return true;
     }
 
     public function mostrar_lote_importado($lote_id)
