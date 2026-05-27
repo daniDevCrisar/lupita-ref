@@ -63,16 +63,17 @@ class ExcelTool
     }
 
 
+    //array de columnas , hoja de excel, id_lote
     public static function ordenarColumnasExcel(array $tabla_cols, array $registros, $lote_id  )
     {
         $excel_cols = $registros[0] ?? false;
         //----normalizar nombres de columnas del excel (reemplazar espacios por guiones bajos, eliminar caracteres especiales, etc)----------------
-        $excel_cols = array_map(function($item) {
-            $col_nom = str_replace(' ', '_', $item);
-            $col_nom = str_replace('?', '', $col_nom);
-            $col_nom = str_replace('!', '', $col_nom);
-            return $col_nom;
-        }, $excel_cols);
+//        $excel_cols = array_map(function($item) {
+//            $col_nom = str_replace(' ', '_', $item);
+//            $col_nom = str_replace('?', '', $col_nom);
+//            $col_nom = str_replace('!', '', $col_nom);
+//            return $col_nom;
+//        }, $excel_cols);
         //---------------------------
 
         $col_excel_ordenadas = [];

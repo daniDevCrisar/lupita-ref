@@ -82,5 +82,5 @@ CREATE TABLE referencias (
                              operador_no_responde_fecha VARCHAR(100),
                              operador_no_responde_monitorista VARCHAR(100),
                              operador_no_responde_observacion VARCHAR(100),
-                             PRIMARY KEY (lote_id, codigo, ref)
+                             PRIMARY KEY (lote_id, ref)
 );

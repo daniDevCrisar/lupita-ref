@@ -49,7 +49,7 @@ class ImportController extends Controller
         $data = ExcelTool::limpiarExcelHojas($data);
 
         $lote_id = ExcelTool::generarLoteId();
-        //-------procesar la hoja de llamadas--------------
+        //-------procesar referencias--------------
         $llamadas = $data[$request->txt_llamadas] ?? []; //seleccionar la hoja
         if ( $llamadas[0][0]=='ID') $llamadas[0][0]='VAPI_ID'; //reemplazar id por vapi_id en la primera columna
         $columnas_tmpLotesDet = DBColumns::tmpLotesDet();
