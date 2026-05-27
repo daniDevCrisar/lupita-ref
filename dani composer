@@ -1,0 +1,7 @@
+iniciado con:
+composer create-project laravel/livewire-starter-kit lupita-ref
+
+
+composer require phpoffice/phpspreadsheet
+
+composer require barryvdh/laravel-debugbar --dev
