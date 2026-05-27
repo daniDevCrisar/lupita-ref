@@ -1,11 +1,10 @@
 <?php
 
+use App\Http\Controllers\ImportController;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
@@ -20,3 +19,18 @@ Route::middleware(['auth'])->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+
+Route::prefix('importar')->group(function () {
+
+    Route::get('/json', [ImportController::class, 'procesar_json'])->name('importar.json');
+    //Route::post('/json/procesar', [ImportController::class, 'jsonProcesar']);
+
+    Route::get('/excel', [ImportController::class, 'cargar_excel'])->name('importar.excel');
+    Route::post('/excel/procesar', [ImportController::class, 'procesar_excel_llamadas']);
+
+    Route::get('/excel/{lote_id}', [ImportController::class, 'mostrar_lote_importado'])->name('importar.excel.lote');
+    Route::get('/excel/{lote_id}/procesar', [ImportController::class, 'procesar_importacion_de_lote'])->name('importar.excel.procesar');
+
+});
+
