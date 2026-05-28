@@ -102,6 +102,7 @@ CREATE TABLE referencias (
 
     trt_id INT,
     conductor_id INT,
+    coordinador_id INT,
 
     origen_txt VARCHAR(100),
     origen_ubigeo VARCHAR(6),
@@ -126,7 +127,14 @@ CREATE TABLE referencias (
     fin_de_carga TIMESTAMP DEFAULT NULL,
     inicio_de_carga TIMESTAMP DEFAULT NULL,
     presenta_para_carga TIMESTAMP DEFAULT NULL,
-    compromiso_carga TIMESTAMP DEFAULT NULL
+    compromiso_carga TIMESTAMP DEFAULT NULL,
+
+    # OTROS NO SE
+    fecha_de_cargue TIMESTAMP DEFAULT NULL,
+
+    monitoreo_finalizado TINYINT(1) NOT NULL DEFAULT 1,
+    evento_actual int,
+    evento_actual_fecha TIMESTAMP DEFAULT NULL
 );
 
 CREATE TABLE trts (
@@ -134,6 +142,16 @@ CREATE TABLE trts (
                       sis_id VARCHAR(9) NULL,
                       nombres VARCHAR(100) NOT NULL,
                       ruc VARCHAR(12) NULL,
+
+                      activo TINYINT(1) NOT NULL DEFAULT 1,
+                      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                      FULLTEXT(nombres)
+);
+
+CREATE TABLE coordinadores (
+                      id INT AUTO_INCREMENT PRIMARY KEY,
+                      sis_id VARCHAR(9) NULL,
+                      nombres VARCHAR(100) NOT NULL,
 
                       activo TINYINT(1) NOT NULL DEFAULT 1,
                       created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
