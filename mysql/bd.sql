@@ -169,26 +169,28 @@ CREATE TABLE clientes (
                       FULLTEXT(nombres)
 );
 
+
+DROP TABLE IF EXISTS etapas_logisticas;
 CREATE TABLE etapas_logisticas (
                                    id INT PRIMARY KEY AUTO_INCREMENT,
                                    nombre VARCHAR(50) NOT NULL,
                                    descripcion TEXT,
-                                   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                                   UNIQUE KEY uk_nombre (nombre)
+                                   emoji VARCHAR(10) DEFAULT NULL,
+                                   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Inserción de datos
-INSERT INTO etapas_logisticas (id, nombre, descripcion) VALUES
-('1', 'Confirmado', 'Estado inicial de confirmación del viaje'),
-('2', 'Llegada Origen', 'Eventos relacionados con la llegada al punto de origen'),
-('3', 'Estadia Planta Origen', 'Permanencia en planta de origen para carga y trámites'),
-('4', 'En ruta', 'Viaje hacia el destino, incluye paradas y novedades'),
-('5', 'Llegada Destino', 'Eventos de llegada al punto de destino'),
-('6', 'Descarga', 'Proceso de descarga de mercancía'),
-('100', 'Alerta GPS', 'Alertas relacionadas con GPS y tracking'),
-('101', 'Reprogramacion', 'Viajes que han sido reprogramados'),
-('102', 'Sin Monitoreo', 'Viajes sin seguimiento activo'),
-('103', 'Sin respuesta', 'Operador no responde a comunicaciones');
+-- Inserción de datos con emojis
+INSERT INTO etapas_logisticas (id, nombre, descripcion, emoji) VALUES
+(1, 'Confirmado', 'Estado inicial de confirmación del viaje', '✅'),
+(2, 'Fuera de planta para carga', 'Vehículo fuera de planta para proceso de carga', '🛻'),
+(3, 'Dentro de planta para carga', 'Vehículo dentro de planta para proceso de carga', '🏭'),
+(4, 'En ruta', 'Viaje hacia el destino, incluye paradas y novedades', '🛣️'),
+(5, 'Fuera de planta para descarga', 'Vehículo fuera de planta para proceso de descarga', '🚛'),
+(6, 'Dentro de planta para descarga', 'Vehículo dentro de planta para proceso de descarga', '🏁'),
+(100, 'Alerta GPS', 'Alertas relacionadas con GPS y tracking', '⚠️'),
+(101, 'Reprogramacion', 'Viajes que han sido reprogramados', '🔄'),
+(102, 'Sin Monitoreo', 'Viajes sin seguimiento activo', '📴'),
+(103, 'Sin respuesta', 'Operador no responde a comunicaciones', '🔇');
 
 drop table if exists eventos;
 CREATE TABLE eventos (
@@ -196,8 +198,7 @@ CREATE TABLE eventos (
                          etapa_id INT NOT NULL,
                          nombre_evento VARCHAR(100) NOT NULL,
                          nombre VARCHAR(100) NOT NULL,
-                         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                         FOREIGN KEY (etapa_id) REFERENCES etapas_logisticas(id)
+                         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 INSERT INTO eventos (id, etapa_id, nombre_evento, nombre) VALUES

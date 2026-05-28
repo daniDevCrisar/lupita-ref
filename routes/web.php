@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ImportController;
+use App\Http\Controllers\ReferenciasController;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
@@ -33,4 +34,6 @@ Route::prefix('importar')->group(function () {
     Route::get('/excel/{lote_id}/procesar', [ImportController::class, 'procesar_importacion_de_lote'])->name('importar.excel.procesar');
 
 });
+
+Route::get('/referencias', [ReferenciasController::class, 'lista_referencias'])->name('principal.referencias');
 
