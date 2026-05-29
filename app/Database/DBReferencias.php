@@ -2,12 +2,23 @@
 
 namespace App\Database;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Query\Builder;
 class DBReferencias
 {
     public static $lista = [];
+    public static $request = [];
     public static function listaPrincipal(){
+        $etapa_l= self::$request->etapa_logistica_id;
+        $coordinador= self::$request->coordinador_id;
+
+        $fecha_i =self::$request->fecha_inicio??'';
+        $fecha_f= self::$request->fecha_fin??'';
+
+        $viaje_origen =self::$request->viaje_origen??'';
+        $viaje_destino = self::$request->viaje_destino??'';
+
         $sql="
         SELECT
             a.monitoreo_finalizado, a.ref ,
@@ -70,6 +81,36 @@ class DBReferencias
         a.compromiso_carga,
         a.presenta_para_carga
         ")
+        ->when((string) $etapa_l !='', function ($query) use($etapa_l) {
+            $query->where('e.id', '=', $etapa_l);
+        })
+        ->when((string) $coordinador !='', function ($query) use($coordinador) {
+            $query->where('a.coordinador_id', '=', $coordinador);
+        })
+        ->when($fecha_i or $fecha_f, function ($query) use ($fecha_i, $fecha_f) {
+            if ($fecha_i and !$fecha_f)
+                $query->whereBetween('a.compromiso_carga', [
+                    Carbon::parse($fecha_i)->startOfDay(),
+                    Carbon::parse($fecha_i)->endOfDay()
+                ]);
+            elseif ($fecha_i and $fecha_f)
+                $query->whereBetween('a.compromiso_carga', [
+                    Carbon::parse($fecha_i)->startOfDay(),
+                    Carbon::parse($fecha_f)->endOfDay()
+                ]);
+        })
+        ->when((string) $viaje_origen !='', function ($query) use($viaje_origen) {
+            if ($viaje_origen==1)
+                $query->whereRaw("(LEFT(a.origen_ubigeo, 2) = '15' or LEFT(a.origen_ubigeo, 2) = '07')");
+            else
+                $query->whereRaw("(LEFT(a.origen_ubigeo, 2) != '15' and LEFT(a.origen_ubigeo, 2) != '07')");
+        })
+        ->when((string) $viaje_destino !='', function ($query) use($viaje_destino) {
+            if ($viaje_destino==1)
+                $query->whereRaw("(LEFT(a.destino_ubigeo, 2) = '15' or LEFT(a.destino_ubigeo, 2) = '07')");
+            else
+                $query->whereRaw("(LEFT(a.destino_ubigeo, 2) != '15' and LEFT(a.destino_ubigeo, 2) != '07')");
+        })
         ->paginate(50)
         ->withQueryString();
         self::$lista = $db_refs;

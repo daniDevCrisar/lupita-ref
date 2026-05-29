@@ -4,12 +4,10 @@ namespace App\Database;
 
 use Illuminate\Support\Facades\DB;
 
-class DBEtapasLogisticas
+class DBCoordinadores
 {
     public static function listaPrincipal(){
-        $sql="
-        SELECT * FROM `etapas_logisticas`;
-        ";
+        $sql = "SELECT * from coordinadores";
         return DB::select($sql);
     }
 }

@@ -43,6 +43,11 @@ class DBCore
         }
 
 
+    return true;
+    }
+
+    public static function ejecutar_sp_procesar_lote($lote){
+        return DB::statement("CALL sp_procesar_lote(?);",[$lote]);
     }
 
 }

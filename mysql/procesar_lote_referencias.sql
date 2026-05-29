@@ -41,4 +41,4 @@ BEGIN
 END$$
 
 DELIMITER ;
-CALL sp_procesar_lote('202605271519385245');
+CALL sp_procesar_lote('202605291657529717');

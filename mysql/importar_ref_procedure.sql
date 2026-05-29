@@ -47,6 +47,8 @@ BEGIN
     DECLARE v_evento_fecha VARCHAR(100); -- campo: fecha_hora_status_actual
 
     #------------BUSCAR EN TABLAS------------------
+    DECLARE n_buscar INT; # Uso general
+
     DECLARE n_trt_id INT;
     DECLARE n_trt_nombres VARCHAR(100);
     DECLARE n_trt_nuevo  TINYINT(1) DEFAULT 0;
@@ -107,31 +109,58 @@ BEGIN
     END IF;
     # ----------------------------------------------------------------
     # -------------------BUSCAR CLIENTE--------------------------------
-    IF v_cliente_origen !='' OR v_cliente_origen IS NULL OR v_cliente_origen != v_origen THEN
-        SELECT id,nombres INTO n_cliente_origen_id , n_cliente_origen_nombres
-                          FROM clientes where nombres = v_cliente_origen limit 1;
-        # comprobar si se encontro si no agregarlo ala tabla
-        IF n_cliente_origen_id IS NULL THEN
-            INSERT INTO clientes (nombres,activo) VALUES (v_cliente_origen,1);
-            SET n_cliente_origen_id = LAST_INSERT_ID();  -- Obtener el último ID insertado
-            SET n_cliente_origen_nombres = v_cliente_origen;         -- Asignar el nombre
-            set n_cliente_origen_nuevo = 1;
+    -- Limpiar variables
+    SET v_cliente_origen = TRIM(REGEXP_REPLACE(v_cliente_origen, '[[:cntrl:]]', ''));
+    SET v_cliente_destino = TRIM(REGEXP_REPLACE(v_cliente_destino, '[[:cntrl:]]', ''));
+
+    -- ========== CLIENTE ORIGEN ==========
+    IF v_cliente_origen IS NOT NULL AND v_cliente_origen != '' AND v_cliente_origen != v_origen THEN
+        # buscar dentro del ubigeo distrito
+        SELECT id INTO n_buscar FROM ubigeo_distritos where distrito = v_cliente_origen limit 1;
+        IF n_buscar IS NULL THEN
+            SELECT id, nombres INTO n_cliente_origen_id, n_cliente_origen_nombres
+            FROM clientes
+            WHERE nombres = v_cliente_origen
+            LIMIT 1;
+
+            IF n_cliente_origen_id IS NULL THEN
+                INSERT INTO clientes (nombres, activo) VALUES (v_cliente_origen, 1);
+                SET n_cliente_origen_id = LAST_INSERT_ID();
+                SET n_cliente_origen_nombres = v_cliente_origen;
+                SET n_cliente_origen_nuevo = 1;
+            END IF;
+        ELSE
+            SET n_cliente_origen_id = NULL;
+            SET n_cliente_origen_nombres = NULL;
         END IF;
     ELSE
-        SET v_cliente_origen = NULL;
+        SET n_cliente_origen_id = NULL;
+        SET n_cliente_origen_nombres = NULL;
     END IF;
-    # cliente destino
-    IF v_cliente_destino !='' OR v_cliente_destino IS NULL  OR v_cliente_destino != v_destino THEN
-        SELECT id,nombres INTO n_cliente_destino_id , n_cliente_destino_nombres FROM clientes
-        where nombres = v_cliente_destino limit 1;
-        IF n_cliente_destino_id IS NULL THEN
-            INSERT INTO clientes (nombres,activo) VALUES (v_cliente_destino,1);
-            SET n_cliente_destino_id = LAST_INSERT_ID();  -- Obtener el último ID insertado
-            SET n_cliente_destino_nombres = v_cliente_origen;         -- Asignar el nombre
-            set n_cliente_destino_nuevo = 1;
+
+    -- ========== CLIENTE DESTINO ==========
+    IF v_cliente_destino IS NOT NULL AND v_cliente_destino != '' AND v_cliente_destino != v_destino THEN
+        # buscar dentro del ubigeo distrito
+        SELECT id INTO n_buscar FROM ubigeo_distritos where distrito = v_cliente_destino limit 1;
+        IF n_buscar IS NULL THEN
+            SELECT id, nombres INTO n_cliente_destino_id, n_cliente_destino_nombres
+            FROM clientes
+            WHERE nombres = v_cliente_destino
+            LIMIT 1;
+
+            IF n_cliente_destino_id IS NULL THEN
+                INSERT INTO clientes (nombres, activo) VALUES (v_cliente_destino, 1);
+                SET n_cliente_destino_id = LAST_INSERT_ID();
+                SET n_cliente_destino_nombres = v_cliente_destino;  -- ← CORREGIDO
+                SET n_cliente_destino_nuevo = 1;
+            END IF;
+        ELSE
+            SET n_cliente_destino_id = NULL;
+            SET n_cliente_destino_nombres = NULL;
         END IF;
     ELSE
-        SET v_cliente_destino = NULL;
+        SET n_cliente_destino_id = NULL;
+        SET n_cliente_destino_nombres = NULL;
     END IF;
     # -----------------ESTADO---------------
     IF v_monitoreo_finalizado='FINALIZADO' THEN
@@ -288,7 +317,4 @@ END$$
 
 DELIMITER ;
 
-
-
-
-call sp_procesar_importacion_ref ('1027681','202605271519385245');
+call sp_procesar_importacion_ref ('1023206','202605291657529717');

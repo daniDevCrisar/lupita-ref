@@ -38,7 +38,7 @@ class ImportController extends Controller
         return view('import.importar_excel');
     }
 
-    public function procesar_excel_llamadas(\Illuminate\Http\Request $request)
+    public function procesar_excel_referencias(\Illuminate\Http\Request $request)
     {
         //--------procesar el archivo excel --------
         if (!$request->hasFile('excel')) {
@@ -56,6 +56,7 @@ class ImportController extends Controller
         $hoja_col_ordenadas=ExcelTool::ordenarColumnasExcel($hoja_columnas, $hoja_refs,$lote_id);
 
         $filas_procesadas=DBCore::insertBatch('tmp_refs',DBColumns::$table_referencias, $hoja_col_ordenadas);
+        DBCore::ejecutar_sp_procesar_lote($lote_id);
 
         return true;
     }
