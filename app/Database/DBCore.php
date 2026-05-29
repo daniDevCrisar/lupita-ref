@@ -2,20 +2,11 @@
 
 namespace App\Database;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class DBCore
 {
-    public static function query($sql, $params = [])
-    {
-        return DB::select($sql, $params);
-    }
-
-    public static function execute($sql, $params = [])
-    {
-        return DB::statement($sql, $params);
-    }
-
     /* =============================
        INSERT MASIVO
     ============================= */
@@ -48,6 +39,10 @@ class DBCore
 
     public static function ejecutar_sp_procesar_lote($lote){
         return DB::statement("CALL sp_procesar_lote(?);",[$lote]);
+    }
+
+    public static function format_fecha($fecha ,$format='d/m/y H:i'){
+        return Carbon::parse($fecha)->format($format);
     }
 
 }

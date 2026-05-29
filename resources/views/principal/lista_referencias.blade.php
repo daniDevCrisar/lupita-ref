@@ -33,7 +33,7 @@
 
                     </tr>
                     </thead>
-                    <tbody style="font-size: 0.9rem;">
+                    <tbody style="font-size: 1rem;">
                     @foreach($refs::$lista as $row)
                     <tr class="{{ $loop->odd ? 'table-secondary' : '' }}">
 
@@ -42,43 +42,44 @@
                     </td>
                     <td>{{$row->evento_status_etapa_emoji .' ' .$row->ref}}</td>
                     <td>
-                        <div class="table-responsive">
+                        <div class="table-responsive p-1">
                             <table class="table table-hover table-dark">
                                 <tbody>
                                 <tr>
                                     <td class="table-success">1</td>
                                     <td>✅ Compromiso</td>
-                                    <td><span class="badge bg-success">{{$row->compromiso_carga}}</span></td>
+                                    <td><span class="badge bg-success">{{$refs::format_fecha($row->compromiso_carga)}}</span></td>
+
+                                    <td class="table-warning">4</td>
+                                    <td>🛣️ En ruta</td>
+                                    <td><span class="badge bg-warning">{{$refs::format_fecha($row->inicio_ruta)}}</span></td>
                                 </tr>
                                 <tr>
                                     <td class="table-primary">2</td>
                                     <td>🛻 Fuera de planta para carga</td>
-                                    <td><span class="badge bg-primary">{{$row->presenta_para_carga}}</span></td>
+                                    <td><span class="badge bg-primary">{{$refs::format_fecha($row->presenta_para_carga)}}</span></td>
+
+                                    <td class="table-danger">5</td>
+                                    <td>🚛 Fuera de planta para descarga</td>
+                                    <td><span class="badge bg-danger">{{$refs::format_fecha($row->llegada_destino)}}</span></td>
                                 </tr>
                                 <tr>
                                     <td class="table-info">3</td>
                                     <td>🏭 Dentro de planta para carga</td>
                                     <td><span
-                                            class="badge bg-info">{{$row->inicio_de_carga}} - {{$row->fin_de_carga}} </span>
+                                            class="badge bg-info fs-6"> {{$refs::format_fecha($row->inicio_de_carga)}} <br>
+                                            {{$refs::format_fecha($row->fin_de_carga)}}</span>
                                     </td>
-                                </tr>
-                                <tr>
-                                    <td class="table-warning">4</td>
-                                    <td>🛣️ En ruta</td>
-                                    <td><span class="badge bg-warning">{{$row->inicio_ruta}}</span></td>
-                                </tr>
-                                <tr>
-                                    <td class="table-danger">5</td>
-                                    <td>🚛 Fuera de planta para descarga</td>
-                                    <td><span class="badge bg-danger">{{$row->llegada_destino}}</span></td>
-                                </tr>
-                                <tr>
+
                                     <td class="table-success">6</td>
                                     <td>🏁 Dentro de planta para descarga</td>
-                                    <td><span
-                                            class="badge bg-success">{{$row->inicio_descargue}} - {{$row->fin_descargue}}</span>
+                                    <td>
+                                        <span
+                                            class="badge bg-success">{{$refs::format_fecha($row->inicio_descargue)}} <br>
+                                            {{$refs::format_fecha($row->fin_descargue)}}</span>
                                     </td>
                                 </tr>
+
                                 </tbody>
                             </table>
                         </div>

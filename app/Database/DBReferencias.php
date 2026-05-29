@@ -5,7 +5,7 @@ namespace App\Database;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Query\Builder;
-class DBReferencias
+class DBReferencias extends DBCore
 {
     public static $lista = [];
     public static $request = [];
@@ -116,4 +116,6 @@ class DBReferencias
         self::$lista = $db_refs;
         return $db_refs;
     }
+
+
 }
